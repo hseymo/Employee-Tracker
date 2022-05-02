@@ -13,4 +13,4 @@
 -- INSERT INTO department (name) VALUES ('ES'); 
 -- SELECT * FROM department;
 
--- INSERT INTO employee (name, salary, department)
+INSERT INTO role (name, salary, department) VALUES (?, ?, ?);

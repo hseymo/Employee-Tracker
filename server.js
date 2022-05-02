@@ -115,8 +115,7 @@ addDepartment = () => {
     })
 };
 
-addRole = () => {
-    viewDepartments()
+
     // .then(([row]) => {
     //     let departments = rows;
     //     const departmentChoices = departments.map(({ id, name }) => ({
@@ -124,25 +123,63 @@ addRole = () => {
     //         value: id
     //     }))
     // })
-    .then(() => 
-    inquirer.prompt([
-        {
-            type: 'input',
-            name: 'role_name', 
-            message: 'What is the name of the role?'
-        },
-        {
-            type: 'number',
-            name: 'role_salary', 
-            message: 'What is the salary for this role?',
-        },
-        {
-            type: 'list',
-            name: 'role_department', 
-            message: 'What department does this role belong in?',
-            choices: departmentChoices
-        }
-    ]))
+
+viewDept = () => {
+    return new Promise((resolve, reject) => {
+        db.query("SELECT department.name AS 'department name', department.id AS 'department id' FROM department", function (err, results) {
+            if (err) {
+                return reject(err)
+            } else {
+                const table = cTable.getTable(results)
+                console.log(table)
+                return resolve(results);
+            }
+    })
+    })
+}
+
+addRole = async () => {
+    try {
+        const queryDept = await viewDept();
+        const inputResponse = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'role_name', 
+                message: 'What is the name of the role?'
+            },
+            {
+                type: 'number',
+                name: 'role_salary', 
+                message: 'What is the salary for this role?',
+            },
+            {
+                input: 'number',
+                name: 'role_department', 
+                message: 'What department does this role belong in? (see chart)',
+                // choices: queryDept
+            }
+        ])
+        .then(answers => {
+                let newRole = {
+                    title: answers.role_name, 
+                    salary: answers.role_salary,
+                    department_id: answers.role_department
+                }
+                console.log(newRole)
+                db.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", (answers.role_name, answers.role_salary, answers.role_department), function (err, results) {
+                    console.log('Success! New role was added')
+                    viewRoles();
+                })
+        })
+    } catch (err) {
+        throw err
+    }
+
+
+
+
+
+
     // .then(answers => {
     //     // TODO: ADD ROLE TO DATABASE
     //     createRole(answers)
