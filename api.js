@@ -12,9 +12,6 @@ const db = mysql.createConnection(
     console.log('Connected to the business database.')
 );
 
-// // TODO: create a Class???
-// TODO: AWAIT 
-
 viewDepartments = () => {
     db.query('SELECT * FROM department', function (err, results) {
         if (err) {
@@ -24,6 +21,20 @@ viewDepartments = () => {
             console.log(table)
         }
     })
+};
+
+viewDepartments = () => {
+    return new Promise((resolve, reject) => {
+        db.query('SELECT * FROM department', function (err, results) {
+            if (err) {
+                return reject(err);
+            } else {
+                const table = cTable.getTable(results)
+                return resolve(table)
+            }
+        })
+    }).then(() => 
+    menu())
 };
 
 viewRoles = () => {
@@ -68,14 +79,15 @@ addDepartment = () => {
 };
 
 addRole = () => {
-    console.log('Add a role:')
-    viewDepartments().then(([row]) => {
-        let departments = rows;
-        const departmentChoices = departments.map(({ id, name}) => ({
-            name: name,
-            value: id
-        }))
-    })
+    viewDepartments()
+    // .then(([row]) => {
+    //     let departments = rows;
+    //     const departmentChoices = departments.map(({ id, name }) => ({
+    //         name: name,
+    //         value: id
+    //     }))
+    // })
+    .then(() => 
     inquirer.prompt([
         {
             type: 'input',
@@ -92,15 +104,15 @@ addRole = () => {
             name: 'role_department', 
             message: 'What department does this role belong in?',
             choices: departmentChoices
-            // TODO: choices: [ LIST DEPARTMENTS ]
         }
-    ]).then(answers => {
-        // TODO: ADD ROLE TO DATABASE
-        createRole(answers)
-        .then(() => console.log(`Added ${answers.title} to data`))
-        .then(() => menu())
+    ]))
+    // .then(answers => {
+    //     // TODO: ADD ROLE TO DATABASE
+    //     createRole(answers)
+    //     .then(() => console.log(`Added ${answers.title} to data`))
+    //     .then(() => menu())
 
-    })
+    // })
 };
 
 // addEmployee = () => {
