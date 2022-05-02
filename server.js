@@ -1,18 +1,5 @@
 const inquirer = require('inquirer');
-// const api = require('./api');
-
-const mysql = require('mysql2');
-const cTable = require('console.table');
-
-const db = mysql.createConnection(
-    {
-        host: 'localhost', 
-        user: 'root',
-        password: 'password',
-        database: 'business'
-    },
-    console.log('Connected to the business database.')
-);
+const api = require('./api');
 
 start();
 
@@ -32,25 +19,20 @@ function menu() {
     ]).then(answers => {
         switch (answers.menu) {
             case 'View all departments':
-                // viewDepartments();
-                db.query('SELECT * FROM department', function (err, results) {
-                    if (err) {
-                        throw err
-                    } else {
-                        const table = cTable.getTable(results)
-                        console.log(table)
-                    }
-                })
+                viewDepartments();
                 menu();
                 break;
             case 'View all roles':
                 viewRoles();
+                menu();
                 break;
             case 'View all employees':
                 viewEmployees();
+                menu();
                 break;
             case 'Add a department':
                 addDepartment();
+                menu();
                 break;
             case 'Add a role':
                 addRole();
