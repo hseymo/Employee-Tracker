@@ -124,7 +124,7 @@ addDepartment = () => {
     //     }))
     // })
 
-viewDept = () => {
+PromiseDept = () => {
     return new Promise((resolve, reject) => {
         db.query("SELECT * FROM department", function (err, results) {
             if (err) {
@@ -134,18 +134,16 @@ viewDept = () => {
                     name:name,
                     value:id
                 }))
-                const table = cTable.getTable(results)
-                console.log(departmentChoices)
                 return resolve(departmentChoices);
             }
-    })
+        })
     })
 }
 
 
 addRole = async () => {
     try {
-        const queryDept = await viewDept();
+        const queryDept = await PromiseDept();
         const inputResponse = await inquirer.prompt([
             {
                 type: 'input',
@@ -211,33 +209,63 @@ addRole = async () => {
 //     })
 // };
 
-updateEmployeeRole = async () => {
-    await new Promise((resolve, reject) => {
-        db.query("SELECT employee.id AS 'employee id', employee.first_name AS 'first name', employee.last_name AS 'last name', role.title AS 'job title', department.name AS 'department', role.salary AS salary, CONCAT(m.first_name, m.last_name) AS 'manager' FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee m on m.id = employee.manager_id;", function (err, results) {
+
+PromiseEmp = () => {
+    return new Promise((resolve, reject) => {
+        db.query("SELECT * FROM employee", function (err, results) {
             if (err) {
                 return reject(err)
             } else {
-                const table = cTable.getTable(results)
-                console.log(table)
-                return resolve(table);
+                const employeeChoices = results.map(({first_name, last_name, id}) => ({
+                    name: first_name + ' ' + last_name,
+                    value:id
+                }))
+                return resolve(employeeChoices);
             }
         })
     })
-    const inputResponse = await inquirer.prompt([
-        {
-            type: 'number',
-            name: 'employee_id', 
-            message: 'Referencing the above table, what is the id of the employee you wish to update?'
-        },
-        {
-            type: 'input',
-            name: 'new_role',
-            message: 'What is their new role?'
-        }
-    ])
-    .then(answers => {
-        console.log(answers)
+}
+
+PromiseRole = () => {
+    return new Promise((resolve, reject) => {
+        db.query("SELECT * FROM role", function (err, results) {
+            if (err) {
+                return reject(err)
+            } else {
+                const roleChoices = results.map(({title, id}) => ({
+                    name: title,
+                    value:id
+                }))
+                return resolve(roleChoices);
+            }
+        })
     })
+}
+
+updateEmployeeRole = async () => {
+    try {
+        const employeeChoices = await PromiseEmp();
+        const roleChoices = await PromiseRole();
+        const inputResponse = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'employee_id', 
+                message: 'Who is the employee you would like to update?',
+                choices: employeeChoices
+            },
+            {
+                type: 'list',
+                name: 'new_role',
+                message: 'What is their new role?',
+                choices: roleChoices
+            }
+        ])
+        .then(answers => {
+            console.log(answers)
+        })
+    } catch (err) {
+        throw err
+    }
 };
 
 finish = () => {
