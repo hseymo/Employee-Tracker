@@ -85,7 +85,7 @@ viewRoles = () => {
 };
 
 viewEmployees = () => {
-    db.query("SELECT employee.id AS 'employee id', employee.first_name AS 'first name', employee.last_name AS 'last name', role.title AS 'job title', department.name AS 'department', role.salary AS salary, CONCAT(m.first_name, ' ', m.last_name) AS 'manager' FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee m on m.id = employee.manager_id;", function (err, results) {
+    db.query("SELECT employee.id AS 'employee id', employee.first_name AS 'first name', employee.last_name AS 'last name', role.title AS 'job title', department.name AS 'department', role.salary AS salary, CONCAT(m.first_name, m.last_name) AS 'manager' FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee m on m.id = employee.manager_id;", function (err, results) {
         if (err) {
         throw err
     } else {
@@ -169,7 +169,7 @@ addRole = async () => {
                 department_id: parseInt(answers.role_department)
             }
             console.log(newRole)
-            db.query(`INSERT INTO role (title, salary, department_id)VALUES (?, ?, ?)`, [newRole.title, newRole.salary, newRole.department_id], function (err, results) {
+            db.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [newRole.title, newRole.salary, newRole.department_id], function (err, results) {
                 console.log('Success! New role was added');
                 menu();
             })
@@ -262,10 +262,6 @@ updateEmployeeRole = async () => {
         ])
         .then(answers => {
             console.log(answers)
-            db.query('UPDATE employee SET role_id = (?) WHERE id = (?)', [answers.new_role, answers.employee_id], function (err, results) {
-                console.log('Success! Role was updated');
-                menu()
-            })
         })
     } catch (err) {
         throw err
