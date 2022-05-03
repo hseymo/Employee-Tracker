@@ -1,6 +1,7 @@
 # **Employee Tracker**
 
 ![Badge](https://img.shields.io/badge/license-MIT-blue)
+![Badge](https://img.shields.io/badge/npm-v8.5.0-red)
 
 ## Table of Contents
 ---
@@ -81,21 +82,27 @@ This program is a command-line application with Node.js. To use this program: <b
 3. Run command "SOURCE schema.sql" to set up the database and tables.
 4. OPTIONAL - run command "SOURCE seeds.sql" if you would like to seed the table with starter data.
 5. Open the "index.js" file in your integrated terminal.
-6. Run the command "index server.js" and a series of prompts will begin. 
+6. Run the command "node index.js" and a series of prompts will begin. 
 7. Run through the prompts as desired. Each will return you to the menu when completed.
 8. When you are finished, select the "finish" option from the menu. Optionally, run "control+C" to abort if desired. 
 
 <br><br>
 
-Please check out this [video]() to view a demonstration of this command-line application in action.
+Please check out this [video](https://drive.google.com/file/d/1WDaEEP6GeagTGqogS1rasjnl5GI0MjLi/view) to view a demonstration of this command-line application in action.
 
 <br>
 
 ### **Screenshots**
 --- 
-![screenshot](ADD URL HERE)
+Table Descriptions <br>
+![describetables](./assets/screenshots/databasetables.png)
 <br>
-
+Prompt Examples <br>
+![prompts](./assets/screenshots/prompts1.png)
+<br>
+![prompts](./assets/screenshots/prompts2.png)
+<br>
+![prompts](./assets/screenshots/prompts3.png)
 <br>
 
 ## Contributing 
