@@ -48,7 +48,8 @@ To install this project:
 2. Clone this project to your machine by using the "git clone + URL" command. 
 3. Open the project with your favorite text editor, like VS Code (in your terminal, first type "cd foldername" then "code ."). 
 4. Install Node.js from their website, if you have not already. Here are some additional [instructions](https://coding-boot-camp.github.io/full-stack/nodejs/how-to-install-nodejs).
-5. This project includes a package.json file that specifies dependencies for this project, so be sure to run "npm install". This will install the packages specified in the next section. 
+5. Install MySQL from their website, if you have not already. Here are some additional [instructions](https://coding-boot-camp.github.io/full-stack/mysql/mysql-installation-guide).
+5. This project includes a package.json file that specifies dependencies for this project, so be sure to run "npm install" in your terminal. This will install the packages specified in the next section. 
 
 <br>
 
@@ -69,14 +70,20 @@ NPM Packages:
 
 ## Description
 ---
-XXX <br><br>
+This purpose of this project is to create a database for a business owner to track their employee's information. Information is stored using MySql in a database titled business_db. This database contains three tables: department, role, and employee. The department table contains the department id and name. The role table includes the role id, title, salary, and associated department id. The employee table includes the employee id, first name, last name, associated role id, and associated manager's id. This project is a command line application that allows the user to view, add, and update data from this database. It aims to assist the business in neatly managing this information for quick and easy use. <br><br>
 This project is not deployed. <br><br>
 
 ## Usage 
 ---
 This program is a command-line application with Node.js. To use this program: <br>
-1. Open the "server.js" file in your integrated terminal. 
-2. Run the command "node server.js" and a series of prompts will begin. 
+1. Open the database files in your terminal. 
+2. Run command "mysql -uroot -p" and enter your password (note: keystrokes will not show).
+3. Run command "SOURCE schema.sql" to set up the database and tables.
+4. OPTIONAL - run command "SOURCE seeds.sql" if you would like to seed the table with starter data.
+5. Open the "index.js" file in your integrated terminal.
+6. Run the command "index server.js" and a series of prompts will begin. 
+7. Run through the prompts as desired. Each will return you to the menu when completed.
+8. When you are finished, select the "finish" option from the menu. Optionally, run "control+C" to abort if desired. 
 
 <br><br>
 
