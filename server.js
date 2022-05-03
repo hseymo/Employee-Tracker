@@ -124,41 +124,28 @@ addDepartment = () => {
     //     }))
     // })
 
-// viewDept = () => {
-//     return new Promise((resolve, reject) => {
-//         db.query("SELECT department.name AS 'department name', department.id AS 'department id' FROM department", function (err, results) {
-//             if (err) {
-//                 return reject(err)
-//             } else {
-//                 const departmentChoices = results.map(({id, name}) => ({
-//                     name:name,
-//                     value:id
-//                 }))
-//                 const table = cTable.getTable(results)
-//                 return resolve(table);
-//             }
-//     })
-//     })
-// }
+viewDept = () => {
+    return new Promise((resolve, reject) => {
+        db.query("SELECT * FROM department", function (err, results) {
+            if (err) {
+                return reject(err)
+            } else {
+                const departmentChoices = results.map(({name, id}) => ({
+                    name:name,
+                    value:id
+                }))
+                const table = cTable.getTable(results)
+                console.log(departmentChoices)
+                return resolve(departmentChoices);
+            }
+    })
+    })
+}
 
 
 addRole = async () => {
     try {
-        await new Promise((resolve, reject) => {
-            db.query("SELECT department.name AS 'department name', department.id AS 'department id' FROM department", function (err, results) {
-                if (err) {
-                    return reject(err)
-                } else {
-                    const departmentChoices = results.map(({id, name}) => ({
-                        name:name,
-                        value:id
-                    }))
-                    const table = cTable.getTable(results)
-                    console.log(table)
-                    return resolve(table);
-                }
-            })
-        })
+        const queryDept = await viewDept();
         const inputResponse = await inquirer.prompt([
             {
                 type: 'input',
@@ -171,10 +158,10 @@ addRole = async () => {
                 message: 'What is the salary for this role?',
             },
             {
-                input: 'number',
+                type: 'list',
                 name: 'role_department', 
                 message: 'What department does this role belong in? (see chart)',
-                // choices: queryDept,
+                choices: queryDept,
             }
         ])
         .then(answers => {
