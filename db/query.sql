@@ -12,3 +12,5 @@
 
 -- INSERT INTO department (name) VALUES ('ES'); 
 -- SELECT * FROM department;
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?) 

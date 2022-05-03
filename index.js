@@ -101,15 +101,34 @@ addDepartment = () => {
         {
             type: 'input',
             name: 'department_name', 
-            message: 'What is the name of the department?'
+            message: 'What is the name of the department?',
+            validate: (ans) => {
+                if (ans.trim() !== ''){
+                    return true;
+                }
+                return 'Please enter a department name'
+            }
         }
     ]).then(answers => {
-        db.query("INSERT INTO department (name) VALUES (?)", answers.department_name, function (err, results) {
-            if (err) {
-                throw err
+        db.query(`SELECT * FROM department`, function (error, results) {
+            if (error) {
+                throw error
             } else {
-                console.log('Success! New department added')
-                menu();
+                for (let i = 0; i <results.length; i++) {
+                    if (results[i].name.toLowerCase() == answers.department_name.toLowerCase()) {
+                        console.log('Department already exists!')
+                        menu();
+                        return;
+                    }
+                }
+                db.query("INSERT INTO department (name) VALUES (?)", answers.department_name, function (err, results) {
+                    if (err) {
+                        throw err
+                    } else {
+                        console.log('Success! New department added!')
+                        menu();
+                    }
+                })
             }
         })
     })
@@ -191,7 +210,6 @@ addRole = async () => {
                 salary: answers.role_salary,
                 department_id: parseInt(answers.role_department)
             }
-            console.log(newRole)
             db.query(`INSERT INTO role (title, salary, department_id)VALUES (?, ?, ?)`, [newRole.title, newRole.salary, newRole.department_id], function (err, results) {
                 console.log('Success! New role was added');
                 menu();
@@ -207,7 +225,6 @@ addEmployee = async () => {
         const roleChoices = await PromiseRole();
         const managerChoices = await PromiseEmp();
         managerChoices.push({value: null})
-        console.log(managerChoices)
         const inputResponse = await inquirer.prompt([
             {
                 type: 'input',
@@ -232,7 +249,6 @@ addEmployee = async () => {
                 choices: managerChoices
             },
         ]).then(answers => {
-            console.log(answers)
             db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [answers.employee_first, answers.employee_last, answers.employee_role, answers.employee_manager], function (err, results) {
                 console.log('Success! Employee added.')
                 menu()
@@ -262,7 +278,6 @@ updateEmployeeRole = async () => {
             }
         ])
         .then(answers => {
-            console.log(answers)
             db.query('UPDATE employee SET role_id = (?) WHERE id = (?)', [answers.new_role, answers.employee_id], function (err, results) {
                 console.log('Success! Role was updated');
                 menu()
