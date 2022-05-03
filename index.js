@@ -27,7 +27,7 @@ function menu() {
             type: "list",
             name: "menu",
             message: "What do you want to do?", 
-            choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Finish']
+            choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', "Update an employee's manager", 'Finish']
         }
     ]).then(answers => {
         switch (answers.menu) {
@@ -51,6 +51,9 @@ function menu() {
                 break;
             case 'Update an employee role':
                 updateEmployeeRole();
+                break;
+            case "Update an employee's manager":
+                updateEmployeeManager();
                 break;
             default: 
                 finish();
@@ -344,6 +347,36 @@ updateEmployeeRole = async () => {
         throw err
     }
 };
+
+updateEmployeeManager = async () => {
+    try {
+        // use promise functions to create choice arrays
+        const employeeChoices = await PromiseEmp();
+        const inputResponse = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'employee_id', 
+                message: 'Who is the employee you would like to update?',
+                choices: employeeChoices
+            },
+            {
+                type: 'list',
+                name: 'new_manager',
+                message: 'Who is their new manager?',
+                choices: employeeChoices
+            }
+        ])
+        .then(answers => {
+            db.query('UPDATE employee SET manager_id = (?) WHERE id = (?)', [answers.new_manager, answers.employee_id], function (err, results) {
+                console.log(`Success! Manager was updated!`);
+                menu()
+            })
+        })
+    } catch (err) {
+        throw err
+    }
+};
+
 
 finish = () => {
     console.log('Goodbye!')
