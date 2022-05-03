@@ -124,41 +124,27 @@ addDepartment = () => {
     //     }))
     // })
 
-// viewDept = () => {
-//     return new Promise((resolve, reject) => {
-//         db.query("SELECT department.name AS 'department name', department.id AS 'department id' FROM department", function (err, results) {
-//             if (err) {
-//                 return reject(err)
-//             } else {
-//                 const departmentChoices = results.map(({id, name}) => ({
-//                     name:name,
-//                     value:id
-//                 }))
-//                 const table = cTable.getTable(results)
-//                 return resolve(table);
-//             }
-//     })
-//     })
-// }
+
 
 
 addRole = async () => {
     try {
         await new Promise((resolve, reject) => {
-            db.query("SELECT department.name AS 'department name', department.id AS 'department id' FROM department", function (err, results) {
-                if (err) {
-                    return reject(err)
-                } else {
-                    const departmentChoices = results.map(({id, name}) => ({
-                        name:name,
-                        value:id
-                    }))
-                    const table = cTable.getTable(results)
-                    console.log(table)
-                    return resolve(table);
-                }
+                db.query("SELECT department.name AS 'department name', department.id AS 'department id' FROM department", function (err, results) {
+                    if (err) {
+                        return reject(err)
+                    } else {
+                        const departmentChoices = results.map(({id, name}) => ({
+                            name:name,
+                            value:id
+                        }))
+                        const table = cTable.getTable(results)
+                        console.log(results)
+                        return resolve(table);
+                    }
             })
-        })
+            })
+        
         const inputResponse = await inquirer.prompt([
             {
                 type: 'input',
@@ -224,34 +210,21 @@ addRole = async () => {
 //     })
 // };
 
-updateEmployeeRole = async () => {
-    await new Promise((resolve, reject) => {
-        db.query("SELECT employee.id AS 'employee id', employee.first_name AS 'first name', employee.last_name AS 'last name', role.title AS 'job title', department.name AS 'department', role.salary AS salary, CONCAT(m.first_name, m.last_name) AS 'manager' FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee m on m.id = employee.manager_id;", function (err, results) {
-            if (err) {
-                return reject(err)
-            } else {
-                const table = cTable.getTable(results)
-                console.log(table)
-                return resolve(table);
-            }
-        })
-    })
-    const inputResponse = await inquirer.prompt([
-        {
-            type: 'number',
-            name: 'employee_id', 
-            message: 'Referencing the above table, what is the id of the employee you wish to update?'
-        },
-        {
-            type: 'input',
-            name: 'new_role',
-            message: 'What is their new role?'
-        }
-    ])
-    .then(answers => {
-        console.log(answers)
-    })
-};
+// updateEmployeeRole = async () => {
+//     const employees = await () => {
+//         return new Promise((resolve, reject) => {
+//             db.query("SELECT employee.id AS 'employee id', employee.first_name AS 'first name', employee.last_name AS 'last name', role.title AS 'job title', department.name AS 'department', role.salary AS salary, CONCAT(m.first_name, m.last_name) AS 'manager' FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee m on m.id = employee.manager_id;", function (err, results) {
+//                 if (err) {
+//                     return reject(err)
+//                 } else {
+//                     const table = cTable.getTable(results)
+//                     return resolve(table);
+//                 }
+//             })
+//         })
+//     }
+
+// };
 
 finish = () => {
     console.log('Goodbye!')
