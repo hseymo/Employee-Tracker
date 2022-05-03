@@ -97,6 +97,9 @@ Please check out this [video](https://drive.google.com/file/d/1WDaEEP6GeagTGqogS
 Table Descriptions <br>
 ![describetables](./assets/screenshots/databasetables.png)
 <br>
+Prompt GIF <br>
+![gif](./assets/screenshots/gif.gif)
+<br>
 Prompt Examples <br>
 ![prompts](./assets/screenshots/prompts1.png)
 <br>
