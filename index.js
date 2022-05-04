@@ -27,7 +27,7 @@ function menu() {
             type: "list",
             name: "menu",
             message: "What do you want to do?", 
-            choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', "Update an employee's manager", 'View employees by manager', 'View employees by department', 'Finish']
+            choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', "Update an employee's manager", 'View employees by manager', 'View employees by department', 'Delete a department', 'Delete a role', 'Delete an employee', 'Finish']
         }
     ]).then(answers => {
         switch (answers.menu) {
@@ -61,6 +61,15 @@ function menu() {
             case 'View employees by department':
                 viewEmployeesByDepartment();
                 break;
+            case 'Delete a department':
+                deleteDepartment();
+                break;
+            case 'Delete a role':
+                deleteRole();
+                break;
+            case 'Delete an employee':
+                deleteEmployee();
+                break;    
             default: 
                 finish();
                 break;
@@ -465,6 +474,69 @@ viewEmployeesByDepartment = async () => {
         throw err
     }
 };
+
+deleteDepartment = async () => {
+    try {
+        const deptChoices = await PromiseDept();
+        const inputResponse = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'dept_selection',
+                message: 'What department do you want to delete?',
+                choices: deptChoices
+            }
+        ]).then (answers => {
+            db.query('DELETE FROM department where id = (?)', answers.dept_selection, function (err, results) {
+                console.log(`Success! Department deleted.`)
+                menu();
+            })
+        })
+    } catch (err) {
+        throw err
+    }
+}
+
+deleteRole = async () => {
+    try {
+        const roleChoices = await PromiseRole();
+        const inputResponse = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'role_selection',
+                message: 'What role do you want to delete?',
+                choices: roleChoices
+            }
+        ]).then (answers => {
+            db.query('DELETE FROM role where id = (?)', answers.role_selection, function (err, results) {
+                console.log(`Success! Role deleted.`)
+                menu();
+            })
+        })
+    } catch (err) {
+        throw err
+    }
+}
+
+deleteEmployee = async () => {
+    try {
+        const empChoices = await PromiseEmp();
+        const inputResponse = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'emp_selection',
+                message: 'Which employee do you want to delete?',
+                choices: empChoices
+            }
+        ]).then (answers => {
+            db.query('DELETE FROM employee where id = (?)', answers.emp_selection, function (err, results) {
+                console.log(`Success! Employee deleted.`)
+                menu();
+            })
+        })
+    } catch (err) {
+        throw err
+    }
+}
 
 finish = () => {
     console.log('Goodbye!')
