@@ -27,7 +27,7 @@ function menu() {
             type: "list",
             name: "menu",
             message: "What do you want to do?", 
-            choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', "Update an employee's manager", 'Finish']
+            choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', "Update an employee's manager", 'View employees by manager', 'View employees by department', 'Finish']
         }
     ]).then(answers => {
         switch (answers.menu) {
@@ -54,6 +54,12 @@ function menu() {
                 break;
             case "Update an employee's manager":
                 updateEmployeeManager();
+                break;
+            case 'View employees by manager':
+                viewEmployeesByManager();
+                break;
+            case 'View employees by department':
+                viewEmployeesByDepartment();
                 break;
             default: 
                 finish();
@@ -90,7 +96,18 @@ viewRoles = () => {
 
 // query statement for employee with id, first and last name, job title, department, salary and manager by name
 viewEmployees = () => {
-    db.query("SELECT employee.id AS 'employee id', employee.first_name AS 'first name', employee.last_name AS 'last name', role.title AS 'job title', department.name AS 'department', role.salary AS salary, CONCAT(m.first_name, ' ', m.last_name) AS 'manager' FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee m on m.id = employee.manager_id;", function (err, results) {
+    db.query(`SELECT 
+        employee.id AS 'employee id', 
+        employee.first_name AS 'first name', 
+        employee.last_name AS 'last name', 
+        role.title AS 'job title', 
+        department.name AS 'department', 
+        role.salary AS salary, 
+        CONCAT(m.first_name, ' ', m.last_name) AS 'manager' 
+    FROM employee 
+    LEFT JOIN role on employee.role_id = role.id 
+    LEFT JOIN department on role.department_id = department.id 
+    LEFT JOIN employee m on m.id = employee.manager_id;`, function (err, results) {
         if (err) {
         throw err
     } else {
@@ -377,6 +394,77 @@ updateEmployeeManager = async () => {
     }
 };
 
+viewEmployeesByManager = async () => {
+    try {
+        const managerChoices = await PromiseEmp();
+        const inputResponse = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'manager_selection',
+                message: `Which manager's employees would you like to view?`,
+                choices: managerChoices
+            }
+        ]).then(answers => {
+            db.query(`SELECT 
+            employee.id AS 'employee id', 
+            employee.first_name AS 'first name', 
+            employee.last_name AS 'last name', 
+            role.title AS 'job title', 
+            department.name AS 'department', 
+            role.salary AS salary
+            FROM employee 
+            LEFT join role on employee.role_id = role.id 
+            LEFT JOIN department on role.department_id = department.id 
+            WHERE manager_id = (?)`, answers.manager_selection, function (err, results) {
+                if (results.length < 1) {
+                    console.log('This person has no reports!')
+                } else {
+                const table = cTable.getTable(results);
+                console.log(table);
+            }
+            menu();
+            });
+        })
+    } catch (err) {
+        throw err
+    }
+};
+
+viewEmployeesByDepartment = async () => {
+    try {
+        const deptChoices = await PromiseDept();
+        const inputResponse = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'department_selection',
+                message: `Which department's employees would you like to view?`,
+                choices: deptChoices
+            }
+        ]).then(answers => {
+            db.query(`SELECT 
+            employee.id AS 'employee id', 
+            employee.first_name AS 'first name', 
+            employee.last_name AS 'last name', 
+            role.title AS 'job title', 
+            department.name AS 'department', 
+            role.salary AS salary
+            FROM employee 
+            LEFT join role on employee.role_id = role.id 
+            LEFT JOIN department on role.department_id = department.id 
+            WHERE department.id = (?)`, answers.department_selection, function (err, results) {
+                if (results.length < 1) {
+                    console.log('This department has no employees!')
+                } else {
+                const table = cTable.getTable(results);
+                console.log(table);
+            }
+            menu();
+            });
+        })
+    } catch (err) {
+        throw err
+    }
+};
 
 finish = () => {
     console.log('Goodbye!')
