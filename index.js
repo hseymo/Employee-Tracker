@@ -27,7 +27,7 @@ function menu() {
             type: "list",
             name: "menu",
             message: "What do you want to do?", 
-            choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', "Update an employee's manager", 'View employees by manager', 'View employees by department', 'Delete a department', 'Delete a role', 'Delete an employee', 'Finish']
+            choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', "Update an employee's manager", 'View employees by manager', 'View employees by department', 'Delete a department', 'Delete a role', 'Delete an employee', 'View utilized budget of a department', 'Finish']
         }
     ]).then(answers => {
         switch (answers.menu) {
@@ -69,7 +69,10 @@ function menu() {
                 break;
             case 'Delete an employee':
                 deleteEmployee();
-                break;    
+                break;   
+            case 'View utilized budget of a department':
+                deptBudget();
+                break; 
             default: 
                 finish();
                 break;
@@ -378,6 +381,8 @@ updateEmployeeManager = async () => {
     try {
         // use promise functions to create choice arrays
         const employeeChoices = await PromiseEmp();
+        const managerChoices = await employeeChoices
+        managerChoices.push({value: null})
         const inputResponse = await inquirer.prompt([
             {
                 type: 'list',
@@ -389,7 +394,7 @@ updateEmployeeManager = async () => {
                 type: 'list',
                 name: 'new_manager',
                 message: 'Who is their new manager?',
-                choices: employeeChoices
+                choices: managerChoices
             }
         ])
         .then(answers => {
@@ -530,6 +535,28 @@ deleteEmployee = async () => {
         ]).then (answers => {
             db.query('DELETE FROM employee where id = (?)', answers.emp_selection, function (err, results) {
                 console.log(`Success! Employee deleted.`)
+                menu();
+            })
+        })
+    } catch (err) {
+        throw err
+    }
+}
+
+deptBudget = async () => {
+    try {
+        const deptChoices = await PromiseDept();
+        const inputResponse = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'dept_selection',
+                message: 'What department do you want to view the utilized budget for?',
+                choices: deptChoices
+            }
+        ]).then (answers => {
+            db.query('SELECT SUM(role.salary) as "Utilized budget" FROM employee LEFT JOIN role on employee.role_id = role.id WHERE department_id = (?)', answers.dept_selection, function (err, results) {
+                const table = cTable.getTable(results);
+                console.log(table);
                 menu();
             })
         })
